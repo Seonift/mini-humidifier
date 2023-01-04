@@ -156,6 +156,25 @@ const XIAOMI_MIIO_AIRPURIFIER_ZHIMI_HUMIDIFIER_CB1 = () => ({
         return this.call_service('xiaomi_miio_airpurifier', service, options);
       },
     },
+    clean: {
+      icon: ICON.DISHWASHER,
+      hide: false,
+      order: 5,
+      state: { attribute: 'clean_mode', mapper: state => (state ? 'on' : 'off') },
+      toggle_action: (state, entity) => {
+        const cleanMode = entity.attributes.clean_mode;
+        const selected = entity.attributes.preset_mode;
+        const options = { entity_id: entity.entity_id };
+
+        // hack
+        if (cleanMode) {
+          options.preset_mode = selected;
+          return this.call_service('fan', 'set_preset_mode', options);
+        }
+
+        return this.call_service('xiaomi_miio_airpurifier', 'fan_set_clean_mode_on', options);
+      },
+    },
   },
 });
 
